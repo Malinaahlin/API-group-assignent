@@ -5,7 +5,7 @@ const {
   getAllUsers,
   getUserById,
   deleteUserById,
-} = require("../controllers/userContollers");
+} = require("../controllers/userControllers");
 //const { isAuthenticated, authorizeAccontType } = require('../middleware/authenticationMiddleware')
 
 // GET - /api/v1/users
