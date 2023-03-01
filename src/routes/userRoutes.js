@@ -17,3 +17,5 @@ const {
 // PUT - /api/v1/users/:userId
 
 // DELETE - /api/v1/users/:userId
+
+module.exports = router;
