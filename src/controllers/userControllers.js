@@ -23,7 +23,7 @@ exports.getUserById = async (req, res) => {
   const userId = req.params.userId;
 
   const [user, metadata] = await sequelize.query(
-    "SELECT id, email, name FROM user WHERE id = $userId",
+    `SELECT id, email, name FROM user WHERE id = $userId`,
     {
       bind: { userId },
       type: QueryTypes.SELECT,
@@ -54,7 +54,7 @@ exports.deleteUserById = async (req, res) => {
   }
 
   const [results, metadata] = await sequelize.query(
-    "DELETE FROM users WHERE id = $userId RETURNING *",
+    `DELETE FROM users WHERE id = $userId RETURNING *`,
     {
       bind: { userId },
     }
