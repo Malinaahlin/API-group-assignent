@@ -1,10 +1,10 @@
-exports.users = {
-    USER: "USER",
-    ADMIN: "ADMIN"
-}
+exports.userRoles = {
+  USER: "USER",
+  ADMIN: "ADMIN",
+  OWNER: "OWNER",
+};
 
-exports.accontType = {
-    ADMIN: "ADMIN",
-    OWNER: "OWNER",
-    GUEST: "GUEST"
-}
+// exports.visitingRoles = {
+//   OWNER: "OWNER",
+//   GUEST: "GUEST",
+// };
