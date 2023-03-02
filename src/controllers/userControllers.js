@@ -7,13 +7,13 @@ const { account_types } = require("../data/account_types");
 // GET - /api/v1/users
 exports.getAllUsers = async (req, res) => {
   if (req.user !== userRoles.ADMIN) {
-    console.log("test test");
+    console.log("du är inte admin");
     // throw new UnauthorizedError("Sorry, Unauthorized Access!"); //denna skickar felmedelande 403s
     res.sendStatus(403);
   }
   if (req.user == userRoles.ADMIN) {
     const [users, metadata] = await sequelize.query(`SELECT * FROM user u`);
-
+    console.log("det ska funka");
     return res.json(users);
   }
 };

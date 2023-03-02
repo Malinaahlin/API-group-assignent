@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { UnauthenticatedError } = require("../utils/errors");
 const bcrypt = require("bcrypt");
 const { sequelize } = require("../database/config");
@@ -6,43 +7,31 @@ const { users, userRoles } = require("../constants/users");
 const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
-  const { password, email } = req.body;
+  const { name, email, username, password } = req.body;
 
   const salt = await bcrypt.genSalt(10);
   const hashedpassword = await bcrypt.hash(password, salt);
-  const [results, metadata] = await sequelize.query(
-    "SELECT id FROM users LIMIT 1"
+
+  await sequelize.query(
+    "INSERT INTO user (name, email, password) VALUES ($name, $email, $username $password)",
+    {
+      bind: {
+        name: name,
+        email: email,
+        username: username,
+        password: hashedpassword,
+      },
+    }
   );
 
-  if (!results || results.length < 1) {
-    await sequelize.query(
-      "INSERT INTO user (email, password, is_admin) VALUES ($email, $password, TRUE)",
-      {
-        bind: {
-          password: hashedpassword,
-          email: email,
-        },
-      }
-    );
-  } else {
-    await sequelize.query(
-      "INSERT INTO user (email, password) VALUES ($email, $password)",
-      {
-        bind: {
-          password: hashedpassword,
-          email: email,
-        },
-      }
-    );
-  }
-
   return res.status(201).json({
-    message: "Registration succeeded.",
+    message: "Registration succeeded. Please log in.",
   });
 };
 
 exports.login = async (req, res) => {
   const { email, password: canditatePassword } = req.body;
+
   const [user, metadata] = await sequelize.query(
     "SELECT * FROM user WHERE email = $email LIMIT 1;",
     {
@@ -50,7 +39,7 @@ exports.login = async (req, res) => {
       type: QueryTypes.SELECT,
     }
   );
-  console.log("hej");
+
   console.log(user);
 
   if (!user) throw new UnauthenticatedError("Invalid Credentials");
@@ -62,13 +51,14 @@ exports.login = async (req, res) => {
   if (!isPasswordCorrect) throw new UnauthenticatedError("Invalid Credentials");
 
   const jwtPayload = {
-    userId: user.id,
+    userId: user.user_id,
     email: user.email,
-    user: user["is_admin"] === 1 ? userRoles.ADMIN : userRoles.USER,
+    role: user["is_admin"] === 1 ? userRoles.ADMIN : userRoles.USER,
   };
 
-  const jwtToken = jwt.sign(jwtPayload, process.env.JWT_SECRET, {
+  const jwtToken = jwt.sign(jwtPayload, "" + process.env.JWT_SECRET, {
     expiresIn: "1h" /* 1d */,
   });
+
   return res.json({ token: jwtToken, user: jwtPayload });
 };
