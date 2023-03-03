@@ -20,7 +20,7 @@ exports.register = async (req, res) => {
         email: email,
         username: username,
         password: hashedpassword,
-        fk_account_id: fk_account_id
+        fk_account_id: fk_account_id,
       },
     }
   );
@@ -54,7 +54,14 @@ exports.login = async (req, res) => {
   const jwtPayload = {
     userId: user.user_id,
     email: user.email,
-    role: user["is_admin"] === 1 ? userRoles.ADMIN : userRoles.USER,
+    role:
+      user.fk_account_id === 1
+        ? userRoles.ADMIN
+        : user.fk_account_id === 2
+        ? userRoles.OWNER
+        : user.fk_account_id === 3
+        ? userRoles.USER
+        : "Unknown role",
   };
 
   const jwtToken = jwt.sign(jwtPayload, "" + process.env.JWT_SECRET, {

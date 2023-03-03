@@ -8,21 +8,24 @@ const {
   updateUserById,
   deleteUserById,
 } = require("../controllers/userControllers");
-//const { isAuthenticated, authorizeAccontType } = require('../middleware/authenticationMiddleware')
+const {
+  isAuthenticated,
+  authorizeAccountType,
+} = require("../middleware/authenticationMiddleware");
 
 // GET - /api/v1/users
-router.get("/", getAllUsers);
+router.get("/", isAuthenticated, getAllUsers);
 
 // GET - /api/v1/users/:userId
-router.get("/:userId", getUserById);
+router.get("/:userId", isAuthenticated, getUserById);
 
 // POST - /api/v1/users
 router.post("/", createNewUser);
 
 // PUT - /api/v1/users/:userId
-router.put("/:userId", updateUserById);
+router.put("/:userId", isAuthenticated, updateUserById);
 
 // DELETE - /api/v1/users/:userId
-router.delete("/:userId", deleteUserById);
+router.delete("/:userId", isAuthenticated, deleteUserById);
 
 module.exports = router;
