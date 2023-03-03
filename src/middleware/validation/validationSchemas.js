@@ -6,6 +6,7 @@ exports.registerSchema = [
     .isEmpty()
     .isLength({ min: 1 })
     .withMessage("You must provide a name that is at least 1 characters long"),
+
   body("email").isEmail().withMessage("You must provide a valid email address"),
 
   body("username")
