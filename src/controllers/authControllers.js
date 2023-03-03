@@ -7,19 +7,20 @@ const { users, userRoles } = require("../constants/users");
 const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
-  const { name, email, username, password } = req.body;
+  const { name, email, username, password, fk_account_id } = req.body;
 
   const salt = await bcrypt.genSalt(10);
   const hashedpassword = await bcrypt.hash(password, salt);
 
   await sequelize.query(
-    "INSERT INTO user (name, email, password) VALUES ($name, $email, $username $password)",
+    "INSERT INTO user (name, email, username, password, fk_account_id) VALUES ($name, $email, $username, $password, $fk_account_id)",
     {
       bind: {
         name: name,
         email: email,
         username: username,
         password: hashedpassword,
+        fk_account_id: fk_account_id
       },
     }
   );
