@@ -10,11 +10,11 @@ const {
 } = require("../controllers/userControllers");
 const {
   isAuthenticated,
-  authorizeAccountType,
+  authorizeRoles,
 } = require("../middleware/authenticationMiddleware");
 
 // GET - /api/v1/users
-router.get("/", isAuthenticated, getAllUsers);
+router.get("/", isAuthenticated, authorizeRoles(userRoles.ADMIN), getAllUsers);
 
 // GET - /api/v1/users/:userId
 router.get("/:userId", isAuthenticated, getUserById);
