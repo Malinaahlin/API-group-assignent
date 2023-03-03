@@ -16,7 +16,7 @@ exports.getUserById = async (req, res) => {
   const userId = req.params.userId;
 
   const [user, metadata] = await sequelize.query(
-    `SELECT id, email, name FROM user WHERE id = $userId`,
+    `SELECT user_id, email, name FROM user WHERE user_id = $userId`,
     {
       bind: { userId },
       type: QueryTypes.SELECT,
@@ -42,23 +42,20 @@ exports.updateUserById = async (req, res) => {
 exports.deleteUserById = async (req, res) => {
   const userId = req.params.userId;
 
-  if (userId != req.user?.user_Id && req.user.role !== userRoles.ADMIN) {
-    throw new UnauthorizedError("Unauthorized Access");
+  if (req.user.role == userRoles.ADMIN || req.user.user_Id === userId) {
+    const [results, metadata] = await sequelize.query(
+      `DELETE FROM users WHERE id = $userId RETURNING *`,
+      {
+        bind: { userId },
+      }
+    );
+    if (!results || !results[0])
+      throw new NotFoundError("That user does not exist");
   }
 
-  const [results, metadata] = await sequelize.query(
-    `DELETE FROM users WHERE id = $userId RETURNING *`,
-    {
-      bind: { userId },
-    }
-  );
-
-  if (!results || !results[0])
-    throw new NotFoundError("That user does not exist");
-
-  await sequelize.query("DELETE FROM users_lists WHERE fk_usersid = $userId", {
-    bind: { userId },
-  });
+  //await sequelize.query("DELETE FROM users_lists WHERE fk_usersid = $userId", {------------ oklart -----------
+  // bind: { userId },
+  //});
 
   return res.sendStatus(204);
 };
