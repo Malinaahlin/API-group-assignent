@@ -6,19 +6,9 @@ const { account_types } = require("../data/account_types");
 
 // GET - /api/v1/users
 exports.getAllUsers = async (req, res) => {
-  if (req.user.fk_account_id !== 1) {
-    console.log("du är inte admin");
-    // throw new UnauthorizedError("Sorry, Unauthorized Access!"); //denna skickar felmedelande 403s
-    res.sendStatus(403);
-    console.log(req.user.fk_account_id);
-  }
+  const [users, metadata] = await sequelize.query(`SELECT * FROM user`);
 
-  if (req.user.fk_account_id == 1) {
-    const [users, metadata] = await sequelize.query(`SELECT * FROM user u`);
-    console.log("det ska funka");
-    console.log(req.user);
-    return res.json(users);
-  }
+  return res.json(users);
 };
 
 // GET - /api/v1/users/:userId

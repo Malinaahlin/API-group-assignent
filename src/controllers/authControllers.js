@@ -3,7 +3,7 @@ const { UnauthenticatedError } = require("../utils/errors");
 const bcrypt = require("bcrypt");
 const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
-const { users, userRoles } = require("../constants/users");
+const { userRoles } = require("../constants/users");
 const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
