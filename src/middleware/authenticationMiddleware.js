@@ -25,7 +25,7 @@ exports.isAuthenticated = async (req, res, next) => {
   }
 };
 
-exports.authorizeAccountType = (...roles) => {
+exports.authorizeRoles = (...roles) => {
   return (req, res, next) => {
     if (!req.user?.roles || !roles.includes(req.user.role)) {
       throw new UnauthenticatedError("No access");
