@@ -15,9 +15,11 @@ exports.isAuthenticated = async (req, res, next) => {
     const payload = jwt.verify(token, "" + process.env.JWT_SECRET);
 
     req.user = {
-      userId: payload.userId,
+      userId: payload.user_id,
+      name: payload.name,
       email: payload.email,
-      role: payload.role,
+      username: payload.username,
+      accountType: payload.fk_account_id,
     };
     next();
   } catch (error) {
