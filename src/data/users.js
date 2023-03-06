@@ -20,4 +20,11 @@ exports.users = [
     password: "user123",
     fk_account_id: 3,
   },
+  {
+    name: "User2",
+    email: "user2@user2.com",
+    username: "User2",
+    password: "user123",
+    fk_account_id: 4,
+  },
 ];
