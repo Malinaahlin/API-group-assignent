@@ -6,16 +6,11 @@ const { account_types } = require("../data/account_types");
 
 // GET - /api/v1/users
 exports.getAllUsers = async (req, res) => {
-  if (req.user !== userRoles.ADMIN) {
-    console.log("du är inte admin");
-    // throw new UnauthorizedError("Sorry, Unauthorized Access!"); //denna skickar felmedelande 403s
-    res.sendStatus(403);
-  }
-  if (req.user == userRoles.ADMIN) {
-    const [users, metadata] = await sequelize.query(`SELECT * FROM user u`);
-    console.log("det ska funka");
-    return res.json(users);
-  }
+  const [users, metadata] = await sequelize.query(
+    `SELECT * FROM user limit 10`
+  );
+
+  return res.json(users);
 };
 
 // GET - /api/v1/users/:userId
@@ -23,7 +18,7 @@ exports.getUserById = async (req, res) => {
   const userId = req.params.userId;
 
   const [user, metadata] = await sequelize.query(
-    `SELECT id, email, name FROM user WHERE id = $userId`,
+    `SELECT user_id, email, name FROM user WHERE user_id = $userId`,
     {
       bind: { userId },
       type: QueryTypes.SELECT,
@@ -49,23 +44,21 @@ exports.updateUserById = async (req, res) => {
 exports.deleteUserById = async (req, res) => {
   const userId = req.params.userId;
 
-  if (userId != req.user?.user_Id && req.user.role !== userRoles.ADMIN) {
-    throw new UnauthorizedError("Unauthorized Access");
+  if (req.user.accountType == userRoles.ADMIN || req.user.userId === userId) {
+    const [result, metadata] = await sequelize.query(
+      `DELETE FROM user WHERE user_id = $userId RETURNING *`,
+      {
+        bind: { userId },
+      }
+    );
   }
+  //   if (!results || !results[0])
+  //     throw new NotFoundError("That user does not exist");
+  // }
 
-  const [results, metadata] = await sequelize.query(
-    `DELETE FROM users WHERE id = $userId RETURNING *`,
-    {
-      bind: { userId },
-    }
-  );
-
-  if (!results || !results[0])
-    throw new NotFoundError("That user does not exist");
-
-  await sequelize.query("DELETE FROM users_lists WHERE fk_usersid = $userId", {
-    bind: { userId },
-  });
+  //await sequelize.query("DELETE FROM users_lists WHERE fk_usersid = $userId", {------------ oklart -----------
+  // bind: { userId },
+  //});
 
   return res.sendStatus(204);
 };
