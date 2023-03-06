@@ -15,11 +15,9 @@ exports.isAuthenticated = async (req, res, next) => {
     const payload = jwt.verify(token, "" + process.env.JWT_SECRET);
 
     req.user = {
-      userId: payload.user_id,
-      name: payload.name,
+      userId: payload.userId,
       email: payload.email,
-      username: payload.username,
-      accountType: payload.fk_account_id,
+      role: payload.role,
     };
     next();
   } catch (error) {
@@ -27,9 +25,9 @@ exports.isAuthenticated = async (req, res, next) => {
   }
 };
 
-exports.authorizeAccountType = (...roles) => {
+exports.authorizeRoles = (...roles) => {
   return (req, res, next) => {
-    if (!req.user?.roles || !roles.includes(req.user.role)) {
+    if (!req.user?.role || !roles.includes(req.user.role)) {
       throw new UnauthenticatedError("No access");
     }
     next();

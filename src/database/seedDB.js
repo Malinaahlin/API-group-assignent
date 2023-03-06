@@ -41,7 +41,7 @@ const workshopDb = async () => {
       email TEXT NOT NULL,
       username TEXT NOT NULL,
       password TEXT NOT NULL,
-      fk_account_id INTEGER NOT NULL,
+      fk_account_id INTEGER NOT NULL DEFAULT 3 CHECK(fk_account_id IN (1, 2, 3)),
       FOREIGN KEY(fk_account_id) REFERENCES account_type(account_id)
     );
     `);
