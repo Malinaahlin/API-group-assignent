@@ -6,7 +6,9 @@ const { account_types } = require("../data/account_types");
 
 // GET - /api/v1/users
 exports.getAllUsers = async (req, res) => {
-  const [users, metadata] = await sequelize.query(`SELECT * FROM user`);
+  const [users, metadata] = await sequelize.query(
+    `SELECT * FROM user limit 10`
+  );
 
   return res.json(users);
 };
@@ -42,16 +44,17 @@ exports.updateUserById = async (req, res) => {
 exports.deleteUserById = async (req, res) => {
   const userId = req.params.userId;
 
-  if (req.user.role == userRoles.ADMIN || req.user.user_Id === userId) {
-    const [results, metadata] = await sequelize.query(
-      `DELETE FROM users WHERE id = $userId RETURNING *`,
+  if (req.user.accountType == userRoles.ADMIN || req.user.userId === userId) {
+    const [result, metadata] = await sequelize.query(
+      `DELETE FROM user WHERE user_id = $userId RETURNING *`,
       {
         bind: { userId },
       }
     );
-    if (!results || !results[0])
-      throw new NotFoundError("That user does not exist");
   }
+  //   if (!results || !results[0])
+  //     throw new NotFoundError("That user does not exist");
+  // }
 
   //await sequelize.query("DELETE FROM users_lists WHERE fk_usersid = $userId", {------------ oklart -----------
   // bind: { userId },
