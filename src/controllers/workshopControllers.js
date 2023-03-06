@@ -16,9 +16,11 @@ exports.getWorkshopById = async (req, res) => {
   const workshopId = req.params.workshopId;
 
   const [workshop, metadata] = await sequelize.query(
-    `SELECT * 
-    FROM workshop 
-    WHERE workshop_id = $workshopId;`,
+    `SELECT w.name, r.content
+    FROM workshop w
+    LEFT JOIN review r
+    ON r.fk_workshop_id = $workshopId;`,
+    // SKA VI HA MED USER MED SÅ MAN SER AUTHOR?
     {
       bind: { workshopId },
       type: QueryTypes.SELECT,
