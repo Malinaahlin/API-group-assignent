@@ -43,18 +43,21 @@ exports.updateUserById = async (req, res) => {
 // DELETE - /api/v1/users/:userId
 exports.deleteUserById = async (req, res) => {
   const userId = req.params.userId;
-
-  if (req.user.accountType == userRoles.ADMIN || req.user.userId === userId) {
-    const [result, metadata] = await sequelize.query(
+  console.log(userId);
+  if (req.user.role == userRoles.ADMIN || req.user.userId == userId) {
+    const [user, metadata] = await sequelize.query(
       `DELETE FROM user WHERE user_id = $userId RETURNING *`,
       {
         bind: { userId },
+        type: QueryTypes.DELETE,
       }
     );
+    if (!user) {
+      throw new NotFoundError("The user does not exist");
+    }
+  } else {
+    throw new UnauthorizedError("You are not allowed to delete this user.");
   }
-  //   if (!results || !results[0])
-  //     throw new NotFoundError("That user does not exist");
-  // }
 
   //await sequelize.query("DELETE FROM users_lists WHERE fk_usersid = $userId", {------------ oklart -----------
   // bind: { userId },
