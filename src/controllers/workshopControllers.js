@@ -20,7 +20,7 @@ exports.getWorkshopById = async (req, res) => {
     FROM workshop w
     LEFT JOIN review r
     ON r.fk_workshop_id = $workshopId;`,
-    // SKA VI HA MED USER MED SÅ MAN SER AUTHOR?
+    // SKA VI HA MED USER MED SÅ MAN SER AUTHOR? - JA
     {
       bind: { workshopId },
       type: QueryTypes.SELECT,
