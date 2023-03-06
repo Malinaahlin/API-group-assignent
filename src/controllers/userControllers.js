@@ -46,7 +46,8 @@ exports.deleteUserById = async (req, res) => {
   console.log(userId);
   if (req.user.role == userRoles.ADMIN || req.user.userId == userId) {
     const [user, metadata] = await sequelize.query(
-      `DELETE FROM user WHERE user_id = $userId RETURNING *`,
+      `DELETE FROM review  WHERE fk_user_id = $userId;
+        DELETE FROM user WHERE user_id = $userId;`,
       {
         bind: { userId },
         type: QueryTypes.DELETE,
@@ -58,10 +59,5 @@ exports.deleteUserById = async (req, res) => {
   } else {
     throw new UnauthorizedError("You are not allowed to delete this user.");
   }
-
-  //await sequelize.query("DELETE FROM users_lists WHERE fk_usersid = $userId", {------------ oklart -----------
-  // bind: { userId },
-  //});
-
   return res.sendStatus(204);
 };
