@@ -130,7 +130,7 @@ const workshopDb = async () => {
       bind: account_typeInsertQueryVariables,
     });
 
-    // Create 3 user passwords
+    // Create 4 user passwords
     const hashPw = async (password) => {
       const salt = await bcrypt.genSalt(10);
       const hashedpassword = await bcrypt.hash(password, salt);
@@ -140,6 +140,7 @@ const workshopDb = async () => {
     let HashedPwOne = await hashPw(users[0].password);
     let HashedPwTwo = await hashPw(users[1].password);
     let HashedPwThree = await hashPw(users[2].password);
+    let HashedPwFour = await hashPw(users[3].password);
 
     await sequelize.query(
       "INSERT INTO user (name, email, username, password, fk_account_id) VALUES ($name, $email, $username, $password, $fk_account_id)",
@@ -176,6 +177,19 @@ const workshopDb = async () => {
           username: users[2].username,
           password: HashedPwThree,
           fk_account_id: users[2].fk_account_id,
+        },
+      }
+    );
+
+    await sequelize.query(
+      "INSERT INTO user (name, email, username, password, fk_account_id) VALUES ($name, $email, $username, $password, $fk_account_id)",
+      {
+        bind: {
+          name: users[3].name,
+          email: users[3].email,
+          username: users[3].username,
+          password: HashedPwFour,
+          fk_account_id: users[3].fk_account_id,
         },
       }
     );
