@@ -6,7 +6,7 @@ const { QueryTypes } = require("sequelize");
 exports.getReviewById = async (req, res) => {
   const reviewId = req.params.reviewId;
 
-  const review = await sequelize.query(
+  const [review] = await sequelize.query(
     `SELECT u.username, r.content AS review, r.rating, w.name AS workshop
     FROM review r
     LEFT JOIN "user" u
@@ -27,7 +27,27 @@ exports.getReviewById = async (req, res) => {
 
 // POST - /api/v1/reviews/
 exports.createNewReview = async (req, res) => {
-  return res.send("createNewReview has been called");
+  const { content, rating, workshopId } = req.body;
+  const userId = req.user.userId;
+
+  const newReview = await sequelize.query(
+    `
+      INSERT INTO review (content, rating, fk_workshop_id, fk_user_id)
+      VALUES ($content, $rating, $workshopId, $userId);
+    `,
+    {
+      bind: {
+        content: content,
+        rating: rating,
+        workshopId: workshopId,
+        userId: userId,
+      },
+      type: QueryTypes.INSERT,
+    }
+  );
+  return res.status(201).json({
+    message: "Review created.",
+  });
 };
 
 // PUT - /api/v1/reviews/:reviewId
