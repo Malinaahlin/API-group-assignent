@@ -10,10 +10,18 @@ const bcrypt = require("bcrypt");
 
 // GET - /api/v1/users
 exports.getAllUsers = async (req, res) => {
-  const [users, metadata] = await sequelize.query(
-    `SELECT * FROM user limit 10`
-  );
+  const limit = req.query?.limit || 10;
+  const offset = req.query?.offset || 0;
 
+  const [users] = await sequelize.query(
+    `SELECT * FROM user ASC LIMIT $limit OFFSET $offset`,
+    {
+      bind: {
+        limit: limit,
+        offset: offset,
+      },
+    }
+  );
   return res.json(users);
 };
 
