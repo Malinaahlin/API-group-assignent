@@ -7,10 +7,47 @@ const { selectProps } = require("../utils/helpers");
 
 // GET - /api/v1/workshops
 exports.getAllWorkshops = async (req, res) => {
-  return res.send("getAllWorkshops has been called");
+  // lägg till if-sats för city
+  const city = req.query.city;
+  const limit = req.query?.limit || 10;
+  const offset = req.query?.offset || 0;
 
-  //limit
-  //offset
+  if (!city) {
+    const workshops = await sequelize.query(
+      `SELECT w.name, w.description, w.address, c.name AS city, w.telephone, w.opening_hours
+    FROM workshop w
+    LEFT JOIN city c ON c.city_id = w.fk_city_id
+    ORDER BY w.name ASC LIMIT $limit OFFSET $offset`,
+
+      {
+        bind: { limit: limit, offset: offset },
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    if (!workshops) throw new NotFoundError("Cannot find any workshops");
+
+    return res.json(workshops);
+  }
+
+  const workshops = await sequelize.query(
+    `SELECT w.name, w.description, w.address, c.name AS city, w.telephone, w.opening_hours
+  FROM workshop w
+  LEFT JOIN city c ON c.city_id = w.fk_city_id
+  WHERE c.name  = $city
+  ORDER BY w.name ASC LIMIT $limit OFFSET $offset`,
+
+    {
+      bind: { city: city, limit: limit, offset: offset },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  if (!workshops) throw new NotFoundError("Cannot find any workshops");
+
+  return res.json(workshops);
+
+  //Lägg till errorhantering
 };
 
 // GET - /api/v1/workshops/:workshopId
