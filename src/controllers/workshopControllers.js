@@ -12,8 +12,6 @@ exports.getAllWorkshops = async (req, res) => {
 
 // GET - /api/v1/workshops/:workshopId
 exports.getWorkshopById = async (req, res) => {
-  // return res.send("getWorkshopById has been called");
-
   const workshopId = req.params.workshopId;
 
   const workshops = await sequelize.query(
@@ -26,8 +24,7 @@ exports.getWorkshopById = async (req, res) => {
     LEFT JOIN city c 
     ON c.city_id = w.fk_city_id 
     WHERE w.workshop_id = $workshopId;`,
-    // SKA VI HA MED USER MED SÅ MAN SER AUTHOR? - JA
-    //Gör en map som gör det vi vill.
+
     {
       bind: { workshopId: workshopId },
       type: QueryTypes.SELECT,
@@ -46,8 +43,6 @@ exports.getWorkshopById = async (req, res) => {
     workshop: workshopName,
     reviews: workshopReviews,
   };
-
-  console.log(workshops);
 
   return res.json(response);
 };
