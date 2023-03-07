@@ -4,7 +4,6 @@ const { sequelize } = require("./config");
 const { account_types } = require("../data/account_types");
 const { workshops } = require("../data/workshops");
 const { cities } = require("../data/cities");
-const { companies } = require("../data/companies");
 const { reviews } = require("../data/reviews");
 const { users } = require("../data/users");
 
@@ -15,7 +14,6 @@ const workshopDb = async () => {
     await sequelize.query(`DROP TABLE IF EXISTS review;`);
     await sequelize.query(`DROP TABLE IF EXISTS workshop;`);
     await sequelize.query(`DROP TABLE IF EXISTS city;`);
-    await sequelize.query(`DROP TABLE IF EXISTS company;`);
     await sequelize.query(`DROP TABLE IF EXISTS user;`);
     await sequelize.query(`DROP TABLE IF EXISTS account_type;`);
 
@@ -46,16 +44,6 @@ const workshopDb = async () => {
     );
     `);
 
-    //Create company table
-    await sequelize.query(`
-    CREATE TABLE IF NOT EXISTS company (
-      company_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      fk_owner_id INTEGER NOT NULL,
-      FOREIGN KEY(fk_owner_id) REFERENCES user(user_id)
-    );
-    `);
-
     // Create workshop table
     await sequelize.query(`
     CREATE TABLE IF NOT EXISTS workshop (
@@ -66,9 +54,7 @@ const workshopDb = async () => {
       telephone TEXT NOT NULL,
       opening_hours TEXT NOT NULL,
       fk_city_id INTEGER NOT NULL,
-      fk_company_id INTEGER NOT NULL,
       FOREIGN KEY(fk_city_id) REFERENCES city(city_id),
-      FOREIGN KEY(fk_company_id) REFERENCES company(company_id)
       );
       `);
 
@@ -195,33 +181,8 @@ const workshopDb = async () => {
     );
     //-------
 
-    let companyInsertQuery = "INSERT INTO company (name, fk_owner_id) VALUES ";
-
-    let companyInsertQueryVariables = [];
-
-    companies.forEach((company, index, array) => {
-      let string = "(";
-      for (let i = 1; i < 3; i++) {
-        string += `$${companyInsertQueryVariables.length + i}`;
-        if (i < 2) string += ",";
-      }
-      companyInsertQuery += string + ")";
-      if (index < array.length - 1) companyInsertQuery += ",";
-
-      const variables = [company.name, company.fk_owner_id];
-      companyInsertQueryVariables = [
-        ...companyInsertQueryVariables,
-        ...variables,
-      ];
-    });
-    companyInsertQuery += ";";
-    await sequelize.query(companyInsertQuery, {
-      bind: companyInsertQueryVariables,
-    });
-    //-------
-
     let workshopInsertQuery =
-      "INSERT INTO workshop (name, description, address, telephone, opening_hours, fk_city_id, fk_company_id) VALUES ";
+      "INSERT INTO workshop (name, description, address, telephone, opening_hours, fk_city_id) VALUES ";
 
     let workshopInsertQueryVariables = [];
 
@@ -241,7 +202,6 @@ const workshopDb = async () => {
         workshop.telephone,
         workshop.opening_hours,
         workshop.fk_city_id,
-        workshop.fk_company_id,
       ];
       workshopInsertQueryVariables = [
         ...workshopInsertQueryVariables,
