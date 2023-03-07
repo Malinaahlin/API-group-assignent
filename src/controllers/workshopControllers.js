@@ -8,6 +8,9 @@ const { selectProps } = require("../utils/helpers");
 // GET - /api/v1/workshops
 exports.getAllWorkshops = async (req, res) => {
   return res.send("getAllWorkshops has been called");
+
+  //limit
+  //offset
 };
 
 // GET - /api/v1/workshops/:workshopId
