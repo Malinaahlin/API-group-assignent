@@ -21,10 +21,10 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
   const userId = req.params.userId;
 
-  const [user, metadata] = await sequelize.query(
+  const user = await sequelize.query(
     `SELECT user_id, email, name, username FROM user WHERE user_id = $userId`,
     {
-      bind: { userId },
+      bind: { userId: userId },
       type: QueryTypes.SELECT,
     }
   );
@@ -47,7 +47,11 @@ exports.updateUserById = async (req, res) => {
 
   if (req.user.role == userRoles.ADMIN || req.user.userId == userId) {
     const user = await sequelize.query(
-      `SELECT user_id, email, name, username FROM user WHERE user_id = $userId`,
+      `SELECT u.user_id, u.name, u.email, u.username AS user, r.content AS review, r.rating 
+      FROM "user" u 
+      LEFT JOIN review r
+      ON r.fk_user_id = u.user_id
+      WHERE user_id = $userId`,
       {
         bind: { userId: userId },
         type: QueryTypes.SELECT,
@@ -56,9 +60,7 @@ exports.updateUserById = async (req, res) => {
     if (!user) throw new NotFoundError("The user does not exist");
 
     if (!name || !email || !username || !password) {
-      throw new BadRequestError(
-        "You must enter a new value in one of the fields."
-      );
+      throw new BadRequestError("You must enter a new value.");
     }
     const salt = await bcrypt.genSalt(10);
     const hashedpassword = await bcrypt.hash(password, salt);
