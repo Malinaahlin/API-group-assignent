@@ -1,4 +1,5 @@
 const express = require("express");
+const { userRoles } = require("../constants/users");
 const router = express.Router();
 const {
   getAllCities,
@@ -7,6 +8,7 @@ const {
   updateCityById,
   deleteCityById,
 } = require("../controllers/cityControllers");
+const { isAuthenticated, authorizeRoles } = require("../middleware/authenticationMiddleware");
 
 // GET - /api/v1/cities
 router.get("/", getAllCities);
@@ -15,12 +17,12 @@ router.get("/", getAllCities);
 router.get("/:cityId", getCityById);
 
 // POST - /api/v1/cities
-router.post("/", createNewCity);
+router.post("/", isAuthenticated, authorizeRoles(userRoles.ADMIN), createNewCity);
 
 // PUT - /api/v1/cities/:cityId
-router.put("/:cityId", updateCityById);
+router.put("/:cityId", isAuthenticated, authorizeRoles(userRoles.ADMIN), updateCityById);
 
 // DELETE - /api/v1/cities/:cityId
-router.delete("/:cityId", deleteCityById);
+router.delete("/:cityId", isAuthenticated, authorizeRoles(userRoles.ADMIN), deleteCityById);
 
 module.exports = router;
