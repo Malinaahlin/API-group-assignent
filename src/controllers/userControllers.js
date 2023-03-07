@@ -32,6 +32,7 @@ exports.getUserById = async (req, res) => {
 
 // POST - /api/v1/users
 exports.createNewUser = async (req, res) => {
+  const userId = req.params.userId;
   return res.send("createNewUser has been called.");
 };
 
@@ -43,19 +44,23 @@ exports.updateUserById = async (req, res) => {
 // DELETE - /api/v1/users/:userId
 exports.deleteUserById = async (req, res) => {
   const userId = req.params.userId;
-  console.log(userId);
+
   if (req.user.role == userRoles.ADMIN || req.user.userId == userId) {
-    const [user, metadata] = await sequelize.query(
-      `DELETE FROM review  WHERE fk_user_id = $userId;
-        DELETE FROM user WHERE user_id = $userId;`,
+    const review = await sequelize.query(
+      `DELETE FROM review WHERE fk_user_id = $userId;`,
       {
-        bind: { userId },
+        bind: { userId: userId },
         type: QueryTypes.DELETE,
       }
     );
-    if (!user) {
-      throw new NotFoundError("The user does not exist");
-    }
+
+    const user = await sequelize.query(
+      `DELETE FROM user WHERE user_id = $userId;`,
+      {
+        bind: { userId: userId },
+        type: QueryTypes.DELETE,
+      }
+    );
   } else {
     throw new UnauthorizedError("You are not allowed to delete this user.");
   }
