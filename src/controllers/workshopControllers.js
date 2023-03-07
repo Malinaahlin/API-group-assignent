@@ -7,10 +7,28 @@ const { selectProps } = require("../utils/helpers");
 
 // GET - /api/v1/workshops
 exports.getAllWorkshops = async (req, res) => {
-  return res.send("getAllWorkshops has been called");
+  //
 
-  //limit
-  //offset
+  const city = req.query.city;
+  const limit = req.query?.limit || 10;
+  const offset = req.query?.offset || 0;
+
+  const workshops = await sequelize.query(
+    `SELECT w.name, w.description, w.address, c.name AS city, w.telephone, w.opening_hours
+  FROM workshop w
+  LEFT JOIN city c ON c.city_id = w.fk_city_id
+  ORDER BY w.name ASC`,
+
+    {
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  if (!workshops) throw new NotFoundError("Cannot find any workshops");
+
+  return res.json(workshops);
+
+  //lägg till city filter
 };
 
 // GET - /api/v1/workshops/:workshopId
