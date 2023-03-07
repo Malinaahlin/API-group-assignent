@@ -1,15 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const {
-  getAllReviews,
   getReviewById,
   createNewReview,
   updateReviewById,
   deleteReviewById,
 } = require("../controllers/reviewControllers");
-
-// GET - /api/v1/reviews
-router.get("/", getAllReviews);
 
 // GET - /api/v1/reviews/:reviewId
 router.get("/:reviewId", getReviewById);

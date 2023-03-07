@@ -1,30 +1,21 @@
-const { users, accountType, userRoles } = require("../constants/users");
 const { NotFoundError, UnauthorizedError } = require("../utils/errors");
 const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
-const { account_types } = require("../data/account_types");
-
-// GET - /api/v1/reviews
-//REMOVE THIS, NOT NEEDED
-exports.getAllReviews = async (req, res) => {
-  const [review, metadata] = await sequelize.query(`
-  SELECT * FROM review 
-  `);
-
-  return res.json(review);
-};
 
 // GET - /api/v1/reviews/:reviewId
 exports.getReviewById = async (req, res) => {
-  //return res.send("getReviewById has been called");
   const reviewId = req.params.reviewId;
 
-  const [review, metadata] = await sequelize.query(
-    `SELECT * 
-    FROM review 
-    WHERE review_id = $reviewId;`,
+  const review = await sequelize.query(
+    `SELECT u.username, r.content AS review, r.rating, w.name AS workshop
+    FROM review r
+    LEFT JOIN "user" u
+    ON u.user_id  = r.fk_user_id
+    LEFT JOIN workshop w
+    ON r.fk_workshop_id = w.workshop_id
+    WHERE r.review_id  = $reviewId;`,
     {
-      bind: { reviewId },
+      bind: { reviewId: reviewId },
       type: QueryTypes.SELECT,
     }
   );
