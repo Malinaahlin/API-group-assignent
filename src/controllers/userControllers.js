@@ -44,7 +44,8 @@ exports.getUserById = async (req, res) => {
 
 // POST - /api/v1/users
 exports.createNewUser = async (req, res) => {
-  const userId = req.params.userId;
+  const {email, name, username, password} = req.body;
+  
   return res.send("createNewUser has been called.");
 };
 

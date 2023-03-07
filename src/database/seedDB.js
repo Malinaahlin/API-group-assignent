@@ -14,6 +14,7 @@ const workshopDb = async () => {
     await sequelize.query(`DROP TABLE IF EXISTS review;`);
     await sequelize.query(`DROP TABLE IF EXISTS workshop;`);
     await sequelize.query(`DROP TABLE IF EXISTS city;`);
+    await sequelize.query(`DROP TABLE IF EXISTS company;`);
     await sequelize.query(`DROP TABLE IF EXISTS user;`);
     await sequelize.query(`DROP TABLE IF EXISTS account_type;`);
 
@@ -54,7 +55,7 @@ const workshopDb = async () => {
       telephone TEXT NOT NULL,
       opening_hours TEXT NOT NULL,
       fk_city_id INTEGER NOT NULL,
-      FOREIGN KEY(fk_city_id) REFERENCES city(city_id),
+      FOREIGN KEY(fk_city_id) REFERENCES city(city_id)
       );
       `);
 
@@ -187,15 +188,7 @@ const workshopDb = async () => {
     let workshopInsertQueryVariables = [];
 
     workshops.forEach((workshop, index, array) => {
-      let string = "(";
-      for (let i = 1; i < 8; i++) {
-        string += `$${workshopInsertQueryVariables.length + i}`;
-        if (i < 7) string += ",";
-      }
-      workshopInsertQuery += string + ")";
-      if (index < array.length - 1) workshopInsertQuery += ",";
-
-      const variables = [
+     const variables = [
         workshop.name,
         workshop.description,
         workshop.address,
@@ -203,6 +196,16 @@ const workshopDb = async () => {
         workshop.opening_hours,
         workshop.fk_city_id,
       ];
+      let string = "(";
+      
+      for (let i = 1; i < variables.length + 1; i++) {
+        string += `$${workshopInsertQueryVariables.length + i}`;
+        if (i < variables.length) string += ",";
+      }
+      workshopInsertQuery += string + ")";
+      if (index < array.length - 1) workshopInsertQuery += ",";
+
+      
       workshopInsertQueryVariables = [
         ...workshopInsertQueryVariables,
         ...variables,
