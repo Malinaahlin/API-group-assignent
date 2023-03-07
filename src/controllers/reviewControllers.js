@@ -1,4 +1,8 @@
-const { NotFoundError, UnauthorizedError } = require("../utils/errors");
+const {
+  NotFoundError,
+  UnauthorizedError,
+  BadRequestError,
+} = require("../utils/errors");
 const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
 
@@ -30,6 +34,9 @@ exports.createNewReview = async (req, res) => {
   const { content, rating, workshopId } = req.body;
   const userId = req.user.userId;
 
+  if (!content || !rating || !workshopId) {
+    throw new BadRequestError("You must fill in all fields! ");
+  }
   const newReview = await sequelize.query(
     `
       INSERT INTO review (content, rating, fk_workshop_id, fk_user_id)
