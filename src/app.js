@@ -17,7 +17,7 @@ app.use((req, res, next) => {
 
 app.use("/api/v1", apiRoutes);
 //app.use(notFoundMiddleware);
-//app.use(errorMiddleware);
+app.use(errorMiddleware);
 
 const port = process.env.PORT || 3000;
 const run = async () => {

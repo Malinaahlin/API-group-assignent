@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { userRoles } = require("../constants/users");
+const {validate} = require("../middleware/validation/validationMiddleware")
+const {registerSchema} = require("../middleware/validation/validationSchemas")
 
 const {
   getAllUsers,
@@ -21,7 +23,7 @@ router.get("/", isAuthenticated, authorizeRoles(userRoles.ADMIN), getAllUsers);
 router.get("/:userId", isAuthenticated, getUserById);
 
 // POST - /api/v1/users
-router.post("/", createNewUser);
+router.post("/", validate(registerSchema), createNewUser);
 
 // PUT - /api/v1/users/:userId
 router.put("/:userId", isAuthenticated, updateUserById);

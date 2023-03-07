@@ -2,6 +2,7 @@ const { ValidationError } = require("../utils/errors")
 
 exports.errorMiddleware = (error, req, res, next) => {
 	let customError = {
+		details: error.details,
 		statusCode: error.statusCode || 500,
 		message: error.message || "Something went wrong try again later",
 	}

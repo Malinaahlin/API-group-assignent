@@ -43,10 +43,19 @@ class UnauthenticatedError extends CustomAPIError {
   }
 }
 
+class ValidationError extends CustomAPIError {
+  constructor(message, errors){
+    super(message);
+    this.statusCode = 400;
+    this.details = errors;
+  }
+}
+
 module.exports = {
   catchErrors,
   BadRequestError,
   NotFoundError,
   UnauthorizedError,
   UnauthenticatedError,
+  ValidationError,
 };
