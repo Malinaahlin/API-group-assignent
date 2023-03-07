@@ -80,6 +80,8 @@ exports.updateUserById = async (req, res) => {
         type: QueryTypes.UPDATE,
       }
     );
+  } else {
+    throw new UnauthenticatedError("Not allowed to update this user.");
   }
 
   return res.status(201).json({
