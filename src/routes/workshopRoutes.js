@@ -8,6 +8,11 @@ const {
   deleteWorkshopById,
 } = require("../controllers/workshopControllers");
 
+const {
+  isAuthenticated,
+  authorizeRoles,
+} = require("../middleware/authenticationMiddleware");
+
 // GET - /api/v1/workshops
 router.get("/", getAllWorkshops);
 
