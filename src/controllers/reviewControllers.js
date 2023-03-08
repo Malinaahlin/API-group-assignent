@@ -1,3 +1,4 @@
+const { userRoles } = require("../constants/users");
 const {
   NotFoundError,
   UnauthorizedError,
@@ -24,7 +25,7 @@ exports.getReviewById = async (req, res) => {
     }
   );
 
-  if (!review) throw new NotFoundError("That review does not exist");
+  if (!review) throw new NotFoundError("This review does not exist");
 
   return res.json(review);
 };
@@ -59,18 +60,32 @@ exports.createNewReview = async (req, res) => {
 
 // PUT - /api/v1/reviews/:reviewId
 exports.updateReviewById = async (req, res) => {
-  const userId = req.user.userId;
   const reviewId = req.params.reviewId;
-  const { content, rating, fk_user_id } = req.body;
+  const { content, rating } = req.body;
 
-  if (req.user.userId == fk_user_id) {
-    const review = await sequelize.query(
+  if (!content || !rating) {
+    throw new BadRequestError("You must enter new values");
+  }
+  const review = await sequelize.query(
+    `
+  SELECT * FROM review
+  WHERE review_id = $reviewId  
+  `,
+    {
+      bind: { reviewId: reviewId },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  if (!review) throw new NotFoundError("This review does not exist");
+
+  if (req.user.userId == review[0].fk_user_id) {
+    const updatedReview = await sequelize.query(
       `UPDATE review
       SET content= $content, rating = $rating
       WHERE review_id  = $reviewId;`,
       {
         bind: {
-          userId: userId,
           reviewId: reviewId,
           content: content,
           rating: rating,
@@ -78,16 +93,41 @@ exports.updateReviewById = async (req, res) => {
         type: QueryTypes.UPDATE,
       }
     );
+    return res.status(201).json({
+      message: "Update succeeded.",
+    });
   } else {
     throw new UnauthorizedError("You are not allowed update this review.");
   }
-
-  return res.status(201).json({
-    message: "Update succeeded.",
-  });
 };
 
 // DELETE - /api/v1/reviews/:reviewId
 exports.deleteReviewById = async (req, res) => {
-  return res.send("deleteReviewById has been called");
+  const reviewId = req.params.reviewId;
+  const userId = req.user.userId;
+
+  const [review] = await sequelize.query(
+    `
+  SELECT * FROM review
+  WHERE review_id = $reviewId  
+  `,
+    {
+      bind: { reviewId: reviewId },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  if (!review) throw new NotFoundError("This review does not exist");
+
+  if (req.user.role == userRoles.ADMIN || userId == review.fk_user_id) {
+    await sequelize.query(`DELETE FROM review WHERE review_id  = $reviewId ;`, {
+      bind: { reviewId: reviewId },
+      type: QueryTypes.DELETE,
+    });
+    return res.status(201).json({
+      message: "Review deleted.",
+    });
+  } else {
+    throw new UnauthorizedError("You are not allowed to delete this review.");
+  }
 };
