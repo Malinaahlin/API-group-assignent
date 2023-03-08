@@ -124,7 +124,7 @@ exports.deleteReviewById = async (req, res) => {
       bind: { reviewId: reviewId },
       type: QueryTypes.DELETE,
     });
-    return res.status(201).json({
+    return res.status(204).json({
       message: "Review deleted.",
     });
   } else {

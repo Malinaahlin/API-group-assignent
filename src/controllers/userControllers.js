@@ -97,23 +97,28 @@ exports.deleteUserById = async (req, res) => {
   const userId = req.params.userId;
 
   if (req.user.role == userRoles.ADMIN || req.user.userId == userId) {
-    const review = await sequelize.query(
-      `DELETE FROM review WHERE fk_user_id = $userId;`,
+    await sequelize.query(`DELETE FROM review WHERE fk_user_id = $userId;`, {
+      bind: { userId: userId },
+      type: QueryTypes.DELETE,
+    });
+
+    await sequelize.query(
+      `UPDATE workshop SET fk_user_id = 1
+      WHERE  fk_user_id = $userId;`,
       {
         bind: { userId: userId },
-        type: QueryTypes.DELETE,
+        type: QueryTypes.UPDATE,
       }
     );
 
-    const user = await sequelize.query(
-      `DELETE FROM user WHERE user_id = $userId;`,
-      {
-        bind: { userId: userId },
-        type: QueryTypes.DELETE,
-      }
-    );
+    await sequelize.query(`DELETE FROM user WHERE user_id = $userId;`, {
+      bind: { userId: userId },
+      type: QueryTypes.DELETE,
+    });
   } else {
     throw new UnauthorizedError("You are not allowed to delete this user.");
   }
-  return res.sendStatus(204);
+  return res.status(204).json({
+    message: "Review deleted.",
+  });
 };
