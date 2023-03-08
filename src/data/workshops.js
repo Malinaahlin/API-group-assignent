@@ -6,6 +6,7 @@ exports.workshops = [
     telephone: "08-704 XX XX",
     opening_hours: "07:00-22:00",
     fk_city_id: 1,
+    fk_user_id: 1,
   },
   {
     name: "Bilar och fordon",
@@ -14,6 +15,7 @@ exports.workshops = [
     telephone: "08-704 XX XX",
     opening_hours: "07:00-20:00",
     fk_city_id: 1,
+    fk_user_id: 1,
   },
   {
     name: "Skada och laga",
@@ -22,6 +24,7 @@ exports.workshops = [
     telephone: "08-704 XX XX",
     opening_hours: "07:00-19:00",
     fk_city_id: 1,
+    fk_user_id: 1,
   },
   {
     name: "Bromma verkstad",
@@ -30,6 +33,7 @@ exports.workshops = [
     telephone: "08-704 XX XX",
     opening_hours: "07:00-20:00",
     fk_city_id: 1,
+    fk_user_id: 1,
   },
   {
     name: "Mekonomen bilservice",
@@ -38,6 +42,7 @@ exports.workshops = [
     telephone: "031-704 XX XX",
     opening_hours: "07:00-15:00",
     fk_city_id: 2,
+    fk_user_id: 1,
   },
   {
     name: "Bilservice götet",
@@ -46,6 +51,7 @@ exports.workshops = [
     telephone: "031-704 XX XX",
     opening_hours: "09:00-17:00",
     fk_city_id: 2,
+    fk_user_id: 1,
   },
   {
     name: "Fyra hjul",
@@ -54,6 +60,7 @@ exports.workshops = [
     telephone: "031-704 XX XX",
     opening_hours: "09:00-23:30",
     fk_city_id: 2,
+    fk_user_id: 1,
   },
 
   {
@@ -63,6 +70,7 @@ exports.workshops = [
     telephone: "040-704 XX XX",
     opening_hours: "09:00-17:00",
     fk_city_id: 3,
+    fk_user_id: 1,
   },
   {
     name: "Skruva fordon",
@@ -71,6 +79,7 @@ exports.workshops = [
     telephone: "040-704 XX XX",
     opening_hours: "09:00-23:00",
     fk_city_id: 3,
+    fk_user_id: 1,
   },
   {
     name: "MECA",
@@ -79,5 +88,6 @@ exports.workshops = [
     telephone: "040-704 XX XX",
     opening_hours: "09:00-23:00",
     fk_city_id: 3,
+    fk_user_id: 1,
   },
 ];

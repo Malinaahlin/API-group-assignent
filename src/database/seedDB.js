@@ -55,7 +55,9 @@ const workshopDb = async () => {
       telephone TEXT NOT NULL,
       opening_hours TEXT NOT NULL,
       fk_city_id INTEGER NOT NULL,
-      FOREIGN KEY(fk_city_id) REFERENCES city(city_id)
+      fk_user_id INTEGER NOT NULL,
+      FOREIGN KEY(fk_city_id) REFERENCES city(city_id),
+      FOREIGN KEY(fk_user_id) REFERENCES user(user_id)
       );
       `);
 
@@ -183,21 +185,22 @@ const workshopDb = async () => {
     //-------
 
     let workshopInsertQuery =
-      "INSERT INTO workshop (name, description, address, telephone, opening_hours, fk_city_id) VALUES ";
+      "INSERT INTO workshop (name, description, address, telephone, opening_hours, fk_city_id, fk_user_id) VALUES ";
 
     let workshopInsertQueryVariables = [];
 
     workshops.forEach((workshop, index, array) => {
-     const variables = [
+      const variables = [
         workshop.name,
         workshop.description,
         workshop.address,
         workshop.telephone,
         workshop.opening_hours,
         workshop.fk_city_id,
+        workshop.fk_user_id,
       ];
       let string = "(";
-      
+
       for (let i = 1; i < variables.length + 1; i++) {
         string += `$${workshopInsertQueryVariables.length + i}`;
         if (i < variables.length) string += ",";
@@ -205,7 +208,6 @@ const workshopDb = async () => {
       workshopInsertQuery += string + ")";
       if (index < array.length - 1) workshopInsertQuery += ",";
 
-      
       workshopInsertQueryVariables = [
         ...workshopInsertQueryVariables,
         ...variables,
