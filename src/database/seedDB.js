@@ -55,7 +55,9 @@ const workshopDb = async () => {
       telephone TEXT NOT NULL,
       opening_hours TEXT NOT NULL,
       fk_city_id INTEGER NOT NULL,
-      FOREIGN KEY(fk_city_id) REFERENCES city(city_id)
+      fk_user_id INTEGER NOT NULL,
+      FOREIGN KEY(fk_city_id) REFERENCES city(city_id),
+      FOREIGN KEY(fk_user_id) REFERENCES user(user_id)
       );
       `);
 
@@ -183,7 +185,7 @@ const workshopDb = async () => {
     //-------
 
     let workshopInsertQuery =
-      "INSERT INTO workshop (name, description, address, telephone, opening_hours, fk_city_id) VALUES ";
+      "INSERT INTO workshop (name, description, address, telephone, opening_hours, fk_city_id, fk_user_id) VALUES ";
 
     let workshopInsertQueryVariables = [];
 
@@ -195,6 +197,7 @@ const workshopDb = async () => {
         workshop.telephone,
         workshop.opening_hours,
         workshop.fk_city_id,
+        workshop.fk_user_id,
       ];
       let string = "(";
 

@@ -89,7 +89,10 @@ exports.getWorkshopById = async (req, res) => {
 
 // POST - /api/v1/workshops
 exports.createNewWorkshop = async (req, res) => {
+  //const workshop
   return res.send("createNewWorkshop has been called");
+
+  // Headers ska in
 };
 
 // PUT - /api/v1/workshops/:workshopId
