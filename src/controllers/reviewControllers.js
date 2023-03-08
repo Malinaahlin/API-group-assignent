@@ -59,6 +59,10 @@ exports.createNewReview = async (req, res) => {
 
 // PUT - /api/v1/reviews/:reviewId
 exports.updateReviewById = async (req, res) => {
+  const userId = req.user.userId;
+  const reviewId = req.params.reviewId;
+  const { content, rating } = req.body;
+
   return res.send("updateReviewById has been called");
 };
 

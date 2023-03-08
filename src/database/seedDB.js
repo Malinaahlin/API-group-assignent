@@ -188,7 +188,7 @@ const workshopDb = async () => {
     let workshopInsertQueryVariables = [];
 
     workshops.forEach((workshop, index, array) => {
-     const variables = [
+      const variables = [
         workshop.name,
         workshop.description,
         workshop.address,
@@ -197,7 +197,7 @@ const workshopDb = async () => {
         workshop.fk_city_id,
       ];
       let string = "(";
-      
+
       for (let i = 1; i < variables.length + 1; i++) {
         string += `$${workshopInsertQueryVariables.length + i}`;
         if (i < variables.length) string += ",";
@@ -205,7 +205,6 @@ const workshopDb = async () => {
       workshopInsertQuery += string + ")";
       if (index < array.length - 1) workshopInsertQuery += ",";
 
-      
       workshopInsertQueryVariables = [
         ...workshopInsertQueryVariables,
         ...variables,

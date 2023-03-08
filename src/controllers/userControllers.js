@@ -3,6 +3,7 @@ const {
   NotFoundError,
   UnauthorizedError,
   BadRequestError,
+  UnauthenticatedError,
 } = require("../utils/errors");
 const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
@@ -42,25 +43,14 @@ exports.getUserById = async (req, res) => {
   return res.json(user);
 };
 
-// POST - /api/v1/users
-exports.createNewUser = async (req, res) => {
-  const {email, name, username, password} = req.body;
-  
-  return res.send("createNewUser has been called.");
-};
-
 // PUT - /api/v1/users/:userId
 exports.updateUserById = async (req, res) => {
-  const userId = req.params.userId;
+  const userId = req.user.userId;
   const { name, email, username, password } = req.body;
 
   if (req.user.role == userRoles.ADMIN || req.user.userId == userId) {
     const user = await sequelize.query(
-      `SELECT u.user_id, u.name, u.email, u.username AS user, r.content AS review, r.rating 
-      FROM "user" u 
-      LEFT JOIN review r
-      ON r.fk_user_id = u.user_id
-      WHERE user_id = $userId`,
+      `SELECT user_id, email, name, username FROM user WHERE user_id = $userId`,
       {
         bind: { userId: userId },
         type: QueryTypes.SELECT,
@@ -90,7 +80,7 @@ exports.updateUserById = async (req, res) => {
       }
     );
   } else {
-    throw new UnauthenticatedError("Not allowed to update this user.");
+    throw new UnauthenticatedError("You are not allowed to update this user.");
   }
 
   return res.status(201).json({
