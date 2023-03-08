@@ -26,6 +26,6 @@ router.post("/", isAuthenticated, createNewWorkshop);
 router.put("/:workshopId", updateWorkshopById);
 
 // DELETE - /api/v1/workshops/:workshopId
-router.delete("/:workshopId", deleteWorkshopById);
+router.delete("/:workshopId", isAuthenticated, deleteWorkshopById);
 
 module.exports = router;
