@@ -31,7 +31,11 @@ exports.getUserById = async (req, res) => {
   const userId = req.params.userId;
 
   const user = await sequelize.query(
-    `SELECT user_id, email, name, username FROM user WHERE user_id = $userId`,
+    `SELECT u.user_id, u.name, u.email, u.username AS user, r.content AS review, r.rating, w.name AS workshop
+    FROM "user" u 
+    LEFT JOIN review r
+    ON r.fk_user_id = u.user_id
+    WHERE user_id = $userId`,
     {
       bind: { userId: userId },
       type: QueryTypes.SELECT,

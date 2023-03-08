@@ -61,9 +61,30 @@ exports.createNewReview = async (req, res) => {
 exports.updateReviewById = async (req, res) => {
   const userId = req.user.userId;
   const reviewId = req.params.reviewId;
-  const { content, rating } = req.body;
+  const { content, rating, fk_user_id } = req.body;
 
-  return res.send("updateReviewById has been called");
+  if (req.user.userId == fk_user_id) {
+    const review = await sequelize.query(
+      `UPDATE review
+      SET content= $content, rating = $rating
+      WHERE review_id  = $reviewId;`,
+      {
+        bind: {
+          userId: userId,
+          reviewId: reviewId,
+          content: content,
+          rating: rating,
+        },
+        type: QueryTypes.UPDATE,
+      }
+    );
+  } else {
+    throw new UnauthorizedError("You are not allowed update this review.");
+  }
+
+  return res.status(201).json({
+    message: "Update succeeded.",
+  });
 };
 
 // DELETE - /api/v1/reviews/:reviewId
