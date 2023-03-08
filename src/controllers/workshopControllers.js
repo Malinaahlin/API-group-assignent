@@ -132,7 +132,63 @@ exports.createNewWorkshop = async (req, res) => {
 
 // PUT - /api/v1/workshops/:workshopId
 exports.updateWorkshopById = async (req, res) => {
-  return res.send("updateWorkshopById has been called");
+  const { name, description, address, telephone, opening_hours, fk_city_id } =
+    req.body;
+  const userId = req.user.userId;
+  const workshopId = req.params.workshopId;
+
+  if (
+    !name ||
+    !description ||
+    !address ||
+    !telephone ||
+    !opening_hours ||
+    !fk_city_id
+  ) {
+    throw new BadRequestError("You must enter values in all fields.");
+  }
+
+  const [workshop] = await sequelize.query(
+    `
+  SELECT * FROM workshop
+  WHERE workshop_id = $workshopId  
+  `,
+    {
+      bind: { workshopId: workshopId },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  if (!workshop) throw new NotFoundError("This workshop does not exist.");
+
+  if (userId !== workshopId && req.user.role !== userRoles.ADMIN) {
+    throw new UnauthorizedError(
+      "You do not have permission to update this workshop."
+    );
+  }
+
+  await sequelize.query(
+    `UPDATE workshop
+    SET name = $name, description  = $description, address = $address, telephone = $telephone, opening_hours = $opening_hours, fk_city_id = $fk_city_id
+    WHERE workshop_id  = $workshopId;`,
+    {
+      bind: {
+        name: name,
+        description: description,
+        address: address,
+        telephone: telephone,
+        opening_hours: opening_hours,
+        fk_city_id: fk_city_id,
+      },
+      type: QueryTypes.UPDATE,
+    }
+  );
+  return res.status(201).json({
+    message: "The workshop has been updated",
+  });
+  //Headers?
+
+  //return res.send("updateWorkshopById has been called");
 };
 
 // DELETE - /api/v1/workshops/:workshopId
