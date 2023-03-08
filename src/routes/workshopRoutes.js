@@ -23,7 +23,7 @@ router.get("/:workshopId", getWorkshopById);
 router.post("/", isAuthenticated, createNewWorkshop);
 
 // PUT - /api/v1/workshops/:workshopId
-router.put("/:workshopId", updateWorkshopById);
+router.put("/:workshopId", isAuthenticated, updateWorkshopById);
 
 // DELETE - /api/v1/workshops/:workshopId
 router.delete("/:workshopId", isAuthenticated, deleteWorkshopById);
