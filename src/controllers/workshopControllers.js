@@ -89,10 +89,45 @@ exports.getWorkshopById = async (req, res) => {
 
 // POST - /api/v1/workshops
 exports.createNewWorkshop = async (req, res) => {
-  //const workshop
-  return res.send("createNewWorkshop has been called");
+  const { name, description, address, telephone, opening_hours, cityId } =
+    req.body;
+  const userId = req.user.userId;
 
-  // Headers ska in
+  if (
+    !name ||
+    !description ||
+    !address ||
+    !telephone ||
+    !opening_hours ||
+    !cityId
+  ) {
+    throw new BadRequestError("You must fill in all fields!");
+  }
+
+  const [newWorkshopId] = await sequelize.query(
+    `
+      INSERT INTO workshop (name, description, address, telephone, opening_hours, fk_city_id, fk_user_id)
+      VALUES ($name, $description, $address, $telephone, $opening_hours, $cityId, $userId);
+    `,
+    {
+      bind: {
+        name: name,
+        description: description,
+        address: address,
+        telephone: telephone,
+        opening_hours: opening_hours,
+        cityId: cityId,
+        userId: userId,
+      },
+      type: QueryTypes.INSERT,
+    }
+  );
+  return res
+    .setHeader(
+      "Location",
+      `${req.protocol}://${req.headers.host}/api/v1/workshops/${newWorkshopId}`
+    )
+    .sendStatus(201);
 };
 
 // PUT - /api/v1/workshops/:workshopId

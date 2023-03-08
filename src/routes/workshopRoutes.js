@@ -20,7 +20,7 @@ router.get("/", getAllWorkshops);
 router.get("/:workshopId", getWorkshopById);
 
 // POST - /api/v1/workshops
-router.post("/", createNewWorkshop);
+router.post("/", isAuthenticated, createNewWorkshop);
 
 // PUT - /api/v1/workshops/:workshopId
 router.put("/:workshopId", updateWorkshopById);
