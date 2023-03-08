@@ -137,5 +137,52 @@ exports.updateWorkshopById = async (req, res) => {
 
 // DELETE - /api/v1/workshops/:workshopId
 exports.deleteWorkshopById = async (req, res) => {
-  return res.send("deleteWorkshopById has been called");
+  const workshopId = req.params.workshopId;
+  const userId = req.user.userId;
+
+  const [workshopCreatedByUser] = await sequelize.query(
+    `SELECT w.fk_user_id 
+  FROM workshop w
+  WHERE w.workshop_id = $workshopId;`,
+    {
+      bind: { workshopId: workshopId },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  const workshopCreatedByUserId = workshopCreatedByUser.fk_user_id;
+
+  if (userId !== workshopCreatedByUserId && req.user.role !== userRoles.ADMIN) {
+    throw new UnauthorizedError(
+      "You do not have permission to delete this workshop"
+    );
+  }
+
+  if (!workshopCreatedByUser) {
+    throw new NotFoundError(
+      "We could not find the workshop you are looking for"
+    );
+  }
+
+  await sequelize.query(
+    `DELETE
+    FROM review
+    WHERE fk_workshop_id  = $workshopId;`,
+    {
+      bind: { workshopId: workshopId },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  await sequelize.query(
+    `DELETE
+FROM workshop
+WHERE workshop_id  = $workshopId;`,
+    {
+      bind: { workshopId: workshopId },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  return res.sendStatus(204);
 };
