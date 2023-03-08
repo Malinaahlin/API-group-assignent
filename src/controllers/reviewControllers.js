@@ -24,7 +24,7 @@ exports.getReviewById = async (req, res) => {
     }
   );
 
-  if (!review) throw new NotFoundError("That review does not exist");
+  if (!review) throw new NotFoundError("This review does not exist");
 
   return res.json(review);
 };
@@ -59,18 +59,32 @@ exports.createNewReview = async (req, res) => {
 
 // PUT - /api/v1/reviews/:reviewId
 exports.updateReviewById = async (req, res) => {
-  const userId = req.user.userId;
   const reviewId = req.params.reviewId;
-  const { content, rating, fk_user_id } = req.body;
+  const { content, rating } = req.body;
 
-  if (req.user.userId == fk_user_id) {
-    const review = await sequelize.query(
+  if (!content || !rating) {
+    throw new BadRequestError("You must enter new values");
+  }
+  const review = await sequelize.query(
+    `
+  SELECT * FROM review
+  WHERE review_id = $reviewId  
+  `,
+    {
+      bind: { reviewId: reviewId },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  if (!review) throw new NotFoundError("This review does not exist");
+
+  if (req.user.userId == review[0].fk_user_id) {
+    const updatedReview = await sequelize.query(
       `UPDATE review
       SET content= $content, rating = $rating
       WHERE review_id  = $reviewId;`,
       {
         bind: {
-          userId: userId,
           reviewId: reviewId,
           content: content,
           rating: rating,
