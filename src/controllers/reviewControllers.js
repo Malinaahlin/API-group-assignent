@@ -46,7 +46,7 @@ exports.createNewReview = async (req, res) => {
       "You must fill in all fields! (content, rating and workshopId) "
     );
   }
-  const newReview = await sequelize.query(
+  const [newReview] = await sequelize.query(
     `
       INSERT INTO review (content, rating, fk_workshop_id, fk_user_id)
       VALUES ($content, $rating, $workshopId, $userId);
@@ -64,7 +64,7 @@ exports.createNewReview = async (req, res) => {
   return res
     .setHeader(
       "Location",
-      `${req.protocol}://${req.headers.host}/api/v1/workshops/${newReview}`
+      `${req.protocol}://${req.headers.host}/api/v1/reviews/${newReview}`
     )
     .sendStatus(201);
 };
