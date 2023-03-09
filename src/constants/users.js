@@ -3,8 +3,3 @@ exports.userRoles = {
   ADMIN: "ADMIN",
   OWNER: "OWNER",
 };
-
-// exports.visitingRoles = {
-//   OWNER: "OWNER",
-//   GUEST: "GUEST",
-// };

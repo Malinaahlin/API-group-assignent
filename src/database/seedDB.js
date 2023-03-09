@@ -9,12 +9,9 @@ const { users } = require("../data/users");
 
 const workshopDb = async () => {
   try {
-    // Drop tables if exist - KOLLA ORDNINEGN PÅ DESSA
-    ///////////////////////////
     await sequelize.query(`DROP TABLE IF EXISTS review;`);
     await sequelize.query(`DROP TABLE IF EXISTS workshop;`);
     await sequelize.query(`DROP TABLE IF EXISTS city;`);
-    await sequelize.query(`DROP TABLE IF EXISTS company;`);
     await sequelize.query(`DROP TABLE IF EXISTS user;`);
     await sequelize.query(`DROP TABLE IF EXISTS account_type;`);
 
@@ -119,7 +116,7 @@ const workshopDb = async () => {
       bind: account_typeInsertQueryVariables,
     });
 
-    // Create 4 user passwords
+    // Hash the 4 user passwords
     const hashPw = async (password) => {
       const salt = await bcrypt.genSalt(10);
       const hashedpassword = await bcrypt.hash(password, salt);
@@ -249,13 +246,10 @@ const workshopDb = async () => {
       bind: reviewInsertQueryVariables,
     });
 
-    //console.log(usersRes);
     console.log("Database successfully populated with data...");
   } catch (error) {
-    // Log eny eventual errors to Terminal
     console.error(error);
   } finally {
-    // End Node process
     process.exit(0);
   }
 };
