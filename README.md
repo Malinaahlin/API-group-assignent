@@ -6,6 +6,10 @@ A group assignment in "API-Utveckling" at Medieinstitutet.
 
 This is a review application for car mechanics that uses a SQL REST-API. It is designed for both users to handle reviews and their account and for workshop owners to update their information about their store and keep track on their reviews. To ensure security and privacy the application includes both authentication and authorization features as well as error handling and validation.
 
+### SQL DATABADE
+
+![Database](./SQLDatabase.png)
+
 ### BUILT WITH
 
 - NodeJs
