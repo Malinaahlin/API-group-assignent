@@ -1,5 +1,9 @@
 const { users, accountType, userRoles } = require("../constants/users");
-const { NotFoundError, UnauthorizedError } = require("../utils/errors");
+const {
+  NotFoundError,
+  UnauthorizedError,
+  BadRequestError,
+} = require("../utils/errors");
 const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
 const { account_types } = require("../data/account_types");
@@ -160,8 +164,10 @@ exports.updateWorkshopById = async (req, res) => {
   );
 
   if (!workshop) throw new NotFoundError("This workshop does not exist.");
-
-  if (userId !== workshopId && req.user.role !== userRoles.ADMIN) {
+  console.log(workshop);
+  console.log(userId);
+  console.log(workshopId);
+  if (userId !== workshop.fk_user_id && req.user.role !== userRoles.ADMIN) {
     throw new UnauthorizedError(
       "You do not have permission to update this workshop."
     );
@@ -179,6 +185,7 @@ exports.updateWorkshopById = async (req, res) => {
         telephone: telephone,
         opening_hours: opening_hours,
         fk_city_id: fk_city_id,
+        workshopId: workshopId,
       },
       type: QueryTypes.UPDATE,
     }
@@ -186,9 +193,6 @@ exports.updateWorkshopById = async (req, res) => {
   return res.status(201).json({
     message: "The workshop has been updated",
   });
-  //Headers?
-
-  //return res.send("updateWorkshopById has been called");
 };
 
 // DELETE - /api/v1/workshops/:workshopId
