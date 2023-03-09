@@ -22,6 +22,7 @@ exports.register = async (req, res) => {
         password: hashedpassword,
         fk_account_id: fk_account_id,
       },
+      type: QueryTypes.INSERT,
     }
   );
 
@@ -56,8 +57,6 @@ exports.login = async (req, res) => {
       user.fk_account_id === 1
         ? userRoles.ADMIN
         : user.fk_account_id === 2
-        ? userRoles.OWNER
-        : user.fk_account_id === 3
         ? userRoles.USER
         : "Unknown role",
   };
