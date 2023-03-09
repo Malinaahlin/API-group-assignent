@@ -70,6 +70,7 @@ exports.getWorkshopById = async (req, res) => {
       type: QueryTypes.SELECT,
     }
   );
+  console.log(workshops);
 
   if (!workshops) throw new NotFoundError("That workshop does not exist");
 
@@ -160,9 +161,7 @@ exports.updateWorkshopById = async (req, res) => {
   );
 
   if (!workshop) throw new NotFoundError("This workshop does not exist.");
-  console.log(workshop);
-  console.log(userId);
-  console.log(workshopId);
+
   if (userId !== workshop.fk_user_id && req.user.role !== userRoles.ADMIN) {
     throw new UnauthorizedError(
       "You do not have permission to update this workshop."
@@ -194,6 +193,7 @@ exports.updateWorkshopById = async (req, res) => {
 // DELETE - /api/v1/workshops/:workshopId
 exports.deleteWorkshopById = async (req, res) => {
   const workshopId = req.params.workshopId;
+
   const userId = req.user.userId;
 
   const [workshopCreatedByUser] = await sequelize.query(
