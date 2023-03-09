@@ -1,21 +1,20 @@
 const express = require("express");
 const router = express.Router();
+const { validate } = require("../middleware/validation/validationMiddleware");
+const { reviewSchema } = require("../middleware/validation/validationSchemas");
+const { isAuthenticated } = require("../middleware/authenticationMiddleware");
 const {
   getReviewById,
   createNewReview,
   updateReviewById,
   deleteReviewById,
 } = require("../controllers/reviewControllers");
-const {
-  isAuthenticated,
-  authorizeRoles,
-} = require("../middleware/authenticationMiddleware");
 
 // GET - /api/v1/reviews/:reviewId
 router.get("/:reviewId", getReviewById);
 
 // POST - /api/v1/reviews/
-router.post("/", isAuthenticated, createNewReview);
+router.post("/", isAuthenticated, validate(reviewSchema), createNewReview);
 
 // PUT - /api/v1/reviews/:reviewId
 router.put("/:reviewId", isAuthenticated, updateReviewById);
