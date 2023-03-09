@@ -89,7 +89,7 @@ exports.updateUserById = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedpassword = await bcrypt.hash(password, salt);
 
-    const updates = await sequelize.query(
+    const [updates] = await sequelize.query(
       `UPDATE "user"
       SET name= $name, email= $email, username= $username, password= $password
       WHERE user_id = $userId;`,
@@ -104,7 +104,9 @@ exports.updateUserById = async (req, res) => {
         type: QueryTypes.UPDATE,
       }
     );
-    return res.status(201).json(updates);
+    return res.status(201).json({
+      message: "The user has been updated",
+    });
   } else {
     throw new UnauthenticatedError("You are not allowed to update this user.");
   }
@@ -122,6 +124,7 @@ exports.deleteUserById = async (req, res) => {
         type: QueryTypes.SELECT,
       }
     );
+
     if (!user) throw new NotFoundError("The user does not exist");
 
     await sequelize.query(`DELETE FROM review WHERE fk_user_id = $userId;`, {
@@ -142,7 +145,8 @@ exports.deleteUserById = async (req, res) => {
       bind: { userId: userId },
       type: QueryTypes.DELETE,
     });
-    return res.status(204);
+
+    return res.sendStatus(204);
   } else {
     throw new UnauthorizedError("You are not allowed to delete this user.");
   }
