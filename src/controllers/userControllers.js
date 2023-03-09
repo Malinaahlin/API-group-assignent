@@ -104,13 +104,10 @@ exports.updateUserById = async (req, res) => {
         type: QueryTypes.UPDATE,
       }
     );
+    return res.status(201).json(updates);
   } else {
     throw new UnauthenticatedError("You are not allowed to update this user.");
   }
-
-  return res.status(201).json({
-    message: "Update succeeded.",
-  });
 };
 
 // DELETE - /api/v1/users/:userId
@@ -118,11 +115,6 @@ exports.deleteUserById = async (req, res) => {
   const userId = req.params.userId;
 
   if (req.user.role == userRoles.ADMIN || req.user.userId == userId) {
-    await sequelize.query(`DELETE FROM review WHERE fk_user_id = $userId;`, {
-      bind: { userId: userId },
-      type: QueryTypes.DELETE,
-    });
-
     const [user] = await sequelize.query(
       `SELECT name, email, username FROM user WHERE user_id = $userId`,
       {
@@ -131,6 +123,11 @@ exports.deleteUserById = async (req, res) => {
       }
     );
     if (!user) throw new NotFoundError("The user does not exist");
+
+    await sequelize.query(`DELETE FROM review WHERE fk_user_id = $userId;`, {
+      bind: { userId: userId },
+      type: QueryTypes.DELETE,
+    });
 
     await sequelize.query(
       `UPDATE workshop SET fk_user_id = 1
@@ -145,10 +142,8 @@ exports.deleteUserById = async (req, res) => {
       bind: { userId: userId },
       type: QueryTypes.DELETE,
     });
+    return res.status(204);
   } else {
     throw new UnauthorizedError("You are not allowed to delete this user.");
   }
-  return res.status(204).json({
-    message: "Review deleted.",
-  });
 };

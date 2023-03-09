@@ -8,10 +8,7 @@ const {
   deleteWorkshopById,
 } = require("../controllers/workshopControllers");
 
-const {
-  isAuthenticated,
-  authorizeRoles,
-} = require("../middleware/authenticationMiddleware");
+const { isAuthenticated } = require("../middleware/authenticationMiddleware");
 
 const { validate } = require("../middleware/validation/validationMiddleware");
 const {

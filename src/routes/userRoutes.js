@@ -1,11 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const { userRoles } = require("../constants/users");
-const { validate } = require("../middleware/validation/validationMiddleware");
-const {
-  registerSchema,
-} = require("../middleware/validation/validationSchemas");
-
 const {
   getAllUsers,
   getUserById,

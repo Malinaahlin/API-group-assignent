@@ -12,6 +12,15 @@ exports.getReviewById = async (req, res) => {
   const reviewId = req.params.reviewId;
 
   const [review] = await sequelize.query(
+    `SELECT content, rating FROM review WHERE review_id = $reviewId`,
+    {
+      bind: { reviewId: reviewId },
+      type: QueryTypes.SELECT,
+    }
+  );
+  if (!review) throw new NotFoundError("The review does not exist");
+
+  const [reviewById] = await sequelize.query(
     `SELECT u.username, r.content AS review, r.rating, w.name AS workshop
     FROM review r
     LEFT JOIN "user" u
@@ -24,10 +33,7 @@ exports.getReviewById = async (req, res) => {
       type: QueryTypes.SELECT,
     }
   );
-
-  if (!review) throw new NotFoundError("This review does not exist");
-
-  return res.json(review);
+  return res.status(200).json(reviewById);
 };
 
 // POST - /api/v1/reviews/

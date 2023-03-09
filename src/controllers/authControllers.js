@@ -1,4 +1,3 @@
-require("dotenv").config();
 const { UnauthenticatedError } = require("../utils/errors");
 const bcrypt = require("bcrypt");
 const { sequelize } = require("../database/config");
@@ -7,10 +6,11 @@ const { userRoles } = require("../constants/users");
 const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
-  const { name, email, username, password, fk_account_id } = req.body;
+  const { name, email, username, password } = req.body;
 
   const salt = await bcrypt.genSalt(10);
   const hashedpassword = await bcrypt.hash(password, salt);
+  const fk_account_id = 2;
 
   await sequelize.query(
     "INSERT INTO user (name, email, username, password, fk_account_id) VALUES ($name, $email, $username, $password, $fk_account_id)",
@@ -62,7 +62,7 @@ exports.login = async (req, res) => {
   };
 
   const jwtToken = jwt.sign(jwtPayload, "" + process.env.JWT_SECRET, {
-    expiresIn: "1h" /* 1d */,
+    expiresIn: "1h",
   });
 
   return res.json({ token: jwtToken, user: jwtPayload });
