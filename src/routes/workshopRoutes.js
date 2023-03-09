@@ -13,6 +13,11 @@ const {
   authorizeRoles,
 } = require("../middleware/authenticationMiddleware");
 
+const { validate } = require("../middleware/validation/validationMiddleware");
+const {
+  workshopSchema,
+} = require("../middleware/validation/validationSchemas");
+
 // GET - /api/v1/workshops
 router.get("/", getAllWorkshops);
 
@@ -20,7 +25,7 @@ router.get("/", getAllWorkshops);
 router.get("/:workshopId", getWorkshopById);
 
 // POST - /api/v1/workshops
-router.post("/", isAuthenticated, createNewWorkshop);
+router.post("/", isAuthenticated, validate(workshopSchema), createNewWorkshop);
 
 // PUT - /api/v1/workshops/:workshopId
 router.put("/:workshopId", isAuthenticated, updateWorkshopById);
