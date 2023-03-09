@@ -36,7 +36,9 @@ exports.createNewReview = async (req, res) => {
   const userId = req.user.userId;
 
   if (!content || !rating || !workshopId) {
-    throw new BadRequestError("You must fill in all fields! ");
+    throw new BadRequestError(
+      "You must fill in all fields! (content, rating and workshopId) "
+    );
   }
   const newReview = await sequelize.query(
     `
@@ -53,9 +55,12 @@ exports.createNewReview = async (req, res) => {
       type: QueryTypes.INSERT,
     }
   );
-  return res.status(201).json({
-    message: "Review created.",
-  });
+  return res
+    .setHeader(
+      "Location",
+      `${req.protocol}://${req.headers.host}/api/v1/workshops/${newReview}`
+    )
+    .sendStatus(201);
 };
 
 // PUT - /api/v1/reviews/:reviewId
