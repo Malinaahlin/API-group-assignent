@@ -8,6 +8,7 @@ const {
 const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
 const bcrypt = require("bcrypt");
+const { selectProps } = require("../utils/helpers");
 
 // GET - /api/v1/users
 exports.getAllUsers = async (req, res) => {
@@ -28,15 +29,24 @@ exports.getAllUsers = async (req, res) => {
 
   if (!users) throw new NotFoundError("The user does not exist");
 
-  return res.json(AllUsers);
+  return res.status(200).json(AllUsers);
 };
 
 // GET - /api/v1/users/:userId
 exports.getUserById = async (req, res) => {
   const userId = req.params.userId;
 
-  const user = await sequelize.query(
-    `SELECT u.user_id, u.name, u.email, u.username AS user, r.content AS review, r.rating, w.name AS workshop
+  const [user] = await sequelize.query(
+    `SELECT name, email, username FROM user WHERE user_id = $userId`,
+    {
+      bind: { userId: userId },
+      type: QueryTypes.SELECT,
+    }
+  );
+  if (!user) throw new NotFoundError("The user does not exist");
+
+  const userReview = await sequelize.query(
+    `SELECT u.user_id, u.name, u.email, u.username AS user, r.content AS review, r.rating
     FROM "user" u 
     LEFT JOIN review r
     ON r.fk_user_id = u.user_id
@@ -46,10 +56,16 @@ exports.getUserById = async (req, res) => {
       type: QueryTypes.SELECT,
     }
   );
+  const userReviews = userReview.map(
+    selectProps("review", "rating", "username")
+  );
 
-  if (!user) throw new NotFoundError("The user does not exist");
+  const response = {
+    user: user,
+    reviews: userReviews,
+  };
 
-  return res.json(user);
+  return res.status(200).json(response);
 };
 
 // PUT - /api/v1/users/:userId
