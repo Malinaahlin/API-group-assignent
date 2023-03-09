@@ -1,4 +1,4 @@
-const { users, accountType, userRoles } = require("../constants/users");
+const { userRoles } = require("../constants/users");
 const {
   NotFoundError,
   UnauthorizedError,
@@ -6,12 +6,10 @@ const {
 } = require("../utils/errors");
 const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
-const { account_types } = require("../data/account_types");
 const { selectProps } = require("../utils/helpers");
 
 // GET - /api/v1/workshops
 exports.getAllWorkshops = async (req, res) => {
-  // lägg till if-sats för city
   const city = req.query.city;
   const limit = req.query?.limit || 10;
   const offset = req.query?.offset || 0;
@@ -50,8 +48,6 @@ exports.getAllWorkshops = async (req, res) => {
   if (!workshops) throw new NotFoundError("Cannot find any workshops");
 
   return res.json(workshops);
-
-  //Lägg till errorhantering
 };
 
 // GET - /api/v1/workshops/:workshopId
@@ -105,7 +101,7 @@ exports.createNewWorkshop = async (req, res) => {
     !opening_hours ||
     !cityId
   ) {
-    throw new BadRequestError("You must fill in all fields!");
+    throw new BadRequestError("You must fill in all fields.");
   }
 
   const [newWorkshopId] = await sequelize.query(
