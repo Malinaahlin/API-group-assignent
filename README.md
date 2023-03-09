@@ -54,10 +54,12 @@ MIRA VITSAS
 ## LOGINS FOR TESTING
 
 (ADMIN)
+
 email: admin@admin.com
 password: admin123
 
 (USERS)
+
 email: user@user.com
 password: user123
 
