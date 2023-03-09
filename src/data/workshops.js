@@ -60,7 +60,7 @@ exports.workshops = [
     telephone: "031-704 XX XX",
     opening_hours: "09:00-23:30",
     fk_city_id: 2,
-    fk_user_id: 4,
+    fk_user_id: 3,
   },
 
   {
@@ -70,7 +70,7 @@ exports.workshops = [
     telephone: "040-704 XX XX",
     opening_hours: "09:00-17:00",
     fk_city_id: 3,
-    fk_user_id: 4,
+    fk_user_id: 2,
   },
   {
     name: "Skruva fordon",
@@ -79,7 +79,7 @@ exports.workshops = [
     telephone: "040-704 XX XX",
     opening_hours: "09:00-23:00",
     fk_city_id: 3,
-    fk_user_id: 4,
+    fk_user_id: 3,
   },
   {
     name: "MECA",
