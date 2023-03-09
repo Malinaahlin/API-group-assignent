@@ -56,15 +56,19 @@ MIRA VITSAS
 (ADMIN)
 
 email: admin@admin.com
+
 password: admin123
 
 (USERS)
 
 email: user@user.com
+
 password: user123
 
 email: user2@user2.com
+
 password: user123
 
 email: user3@user3.com
+
 password: user123
