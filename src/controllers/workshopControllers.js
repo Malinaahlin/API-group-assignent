@@ -72,7 +72,7 @@ exports.getWorkshopById = async (req, res) => {
   );
   console.log(workshops);
 
-  if (!workshops) throw new NotFoundError("That workshop does not exist");
+  if (!workshops) throw new NotFoundError("That workshop does not exist.");
 
   const workshopReviews = workshops.map(
     selectProps("review", "rating", "username")
@@ -210,13 +210,13 @@ exports.deleteWorkshopById = async (req, res) => {
 
   if (userId !== workshopCreatedByUserId && req.user.role !== userRoles.ADMIN) {
     throw new UnauthorizedError(
-      "You do not have permission to delete this workshop"
+      "You do not have permission to delete this workshop."
     );
   }
 
   if (!workshopCreatedByUser) {
     throw new NotFoundError(
-      "We could not find the workshop you are looking for"
+      "We could not find the workshop you are looking for."
     );
   }
 
