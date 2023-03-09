@@ -21,12 +21,12 @@ This is a review application for car mechanics that uses a SQL REST-API. It is d
 
 MAX KARLSSON
 
-- [Github] (https://github.com/maxtkarlsson)
+- [Github](https://github.com/maxtkarlsson)
 - [LinkedIn](https://www.linkedin.com/in/max-karlsson-5307b1a3/)
 
 MIRA VITSAS
 
-- [Github] (https://github.com/miravit)
+- [Github](https://github.com/miravit)
 - [LinkedIn](https://www.linkedin.com/in/miravitsas/)
 
 ## GETTING STARTED
