@@ -12,6 +12,7 @@ This is a review application for car mechanics that uses a SQL REST-API. It is d
 
 ### BUILT WITH
 
+- Javascript
 - NodeJs
 - ExpressJs
 - SQLite
@@ -34,13 +35,34 @@ MIRA VITSAS
 
         git clone https://github.com/Malinaahlin/API-group-assignent.git
 
-2.  run npm install
+2.  install
 
-3.  npm run seedDb
+    npm i
 
-4.  npm run dev
+3.  run in terminal
 
-5.  Create a .env-file and add a JWT_SECRET
+    npm run seedDb
+
+    npm run dev
+
+4.  Create a .env-file and add
 
     PORT = 3000
-    JWT_SECRET =
+
+    JWT_SECRET = (your jwt secret)
+
+## LOGINS FOR TESTING
+
+(ADMIN)
+email: admin@admin.com
+password: admin123
+
+(USERS)
+email: user@user.com
+password: user123
+
+email: user2@user2.com
+password: user123
+
+email: user3@user3.com
+password: user123
