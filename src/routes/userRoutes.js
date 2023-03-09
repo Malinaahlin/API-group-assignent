@@ -21,7 +21,7 @@ const {
 router.get("/", isAuthenticated, authorizeRoles(userRoles.ADMIN), getAllUsers);
 
 // GET - /api/v1/users/:userId
-router.get("/:userId", isAuthenticated, getUserById);
+router.get("/:userId", getUserById);
 
 // PUT - /api/v1/users/:userId
 router.put("/:userId", isAuthenticated, updateUserById);

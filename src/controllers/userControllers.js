@@ -8,6 +8,7 @@ const {
 const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
 const bcrypt = require("bcrypt");
+const { selectProps } = require("../utils/helpers");
 
 // GET - /api/v1/users
 exports.getAllUsers = async (req, res) => {
@@ -26,17 +27,26 @@ exports.getAllUsers = async (req, res) => {
   const userTotal = users.length;
   const AllUsers = { users, userTotal };
 
-  if (!users) throw new NotFoundError("The user does not exist");
+  if (!users) throw new NotFoundError("There are no users");
 
-  return res.json(AllUsers);
+  return res.status(200).json(AllUsers);
 };
 
 // GET - /api/v1/users/:userId
 exports.getUserById = async (req, res) => {
   const userId = req.params.userId;
 
-  const user = await sequelize.query(
-    `SELECT u.user_id, u.name, u.email, u.username AS user, r.content AS review, r.rating, w.name AS workshop
+  const [user] = await sequelize.query(
+    `SELECT name, email, username FROM user WHERE user_id = $userId`,
+    {
+      bind: { userId: userId },
+      type: QueryTypes.SELECT,
+    }
+  );
+  if (!user) throw new NotFoundError("The user does not exist");
+
+  const userReview = await sequelize.query(
+    `SELECT u.user_id, u.name, u.email, u.username AS user, r.content AS review, r.rating
     FROM "user" u 
     LEFT JOIN review r
     ON r.fk_user_id = u.user_id
@@ -46,10 +56,16 @@ exports.getUserById = async (req, res) => {
       type: QueryTypes.SELECT,
     }
   );
+  const userReviews = userReview.map(
+    selectProps("review", "rating", "username")
+  );
 
-  if (!user) throw new NotFoundError("The user does not exist");
+  const response = {
+    user: user,
+    reviews: userReviews,
+  };
 
-  return res.json(user);
+  return res.status(200).json(response);
 };
 
 // PUT - /api/v1/users/:userId
@@ -68,7 +84,7 @@ exports.updateUserById = async (req, res) => {
     if (!user) throw new NotFoundError("The user does not exist");
 
     if (!name || !email || !username || !password) {
-      throw new BadRequestError("You must enter a new value.");
+      throw new BadRequestError("You must fill in all fields.");
     }
     const salt = await bcrypt.genSalt(10);
     const hashedpassword = await bcrypt.hash(password, salt);
@@ -106,6 +122,15 @@ exports.deleteUserById = async (req, res) => {
       bind: { userId: userId },
       type: QueryTypes.DELETE,
     });
+
+    const [user] = await sequelize.query(
+      `SELECT name, email, username FROM user WHERE user_id = $userId`,
+      {
+        bind: { userId: userId },
+        type: QueryTypes.SELECT,
+      }
+    );
+    if (!user) throw new NotFoundError("The user does not exist");
 
     await sequelize.query(
       `UPDATE workshop SET fk_user_id = 1
