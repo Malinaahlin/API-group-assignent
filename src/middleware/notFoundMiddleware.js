@@ -2,7 +2,7 @@ const path = require("path");
 const { NotFoundError } = require("../utils/errors");
 
 exports.notFoundMiddleware = (req, res, next) => {
-  const isApiPath = req.path && req.path.startsWith("/");
+  const isApiPath = req.path && req.path.startsWith("/api/");
 
   if (isApiPath) {
     throw new NotFoundError("This endpoint does not exist...");
