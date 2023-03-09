@@ -23,7 +23,12 @@ exports.getAllUsers = async (req, res) => {
       },
     }
   );
-  return res.json(users);
+  const userTotal = users.length;
+  const AllUsers = { users, userTotal };
+
+  if (!users) throw new NotFoundError("The user does not exist");
+
+  return res.json(AllUsers);
 };
 
 // GET - /api/v1/users/:userId
