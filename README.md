@@ -41,5 +41,6 @@ MIRA VITSAS
 4.  npm run dev
 
 5.  Create a .env-file and add a JWT_SECRET
+
     PORT = 3000
     JWT_SECRET =
