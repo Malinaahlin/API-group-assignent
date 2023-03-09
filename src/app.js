@@ -3,13 +3,16 @@ require("express-async-errors");
 const express = require("express");
 const apiRoutes = require("./routes");
 const { errorMiddleware } = require("./middleware/errorMiddleware");
-const { notFoundMiddleware } = require("./middleware/notFoundMiddleware")
+const { notFoundMiddleware } = require("./middleware/notFoundMiddleware");
 const { sequelize } = require("./database/config");
-const cors = require("cors")
-const xss = require("xss-clean")
+const helmet = require("helmet");
+const cors = require("cors");
+const xss = require("xss-clean");
 const rateLimiter = require("express-rate-limit");
 
 const app = express();
+
+app.use(helmet());
 
 app.use(express.json());
 
@@ -18,16 +21,19 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors({
-  origin: "http://localhost:3000",
-  methods: ["GET", "POST", "PUT", "DELETE"]
-}));
-app.use(xss());
 app.use(
-	rateLimiter({
-	windowMs: 15 * 60 * 1000,
-	max: 60,
-	})
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
+app.use(xss());
+
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000,
+    max: 60,
+  })
 );
 
 app.use("/api/v1", apiRoutes);
