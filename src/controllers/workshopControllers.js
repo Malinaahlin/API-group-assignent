@@ -1,13 +1,15 @@
-const { users, accountType, userRoles } = require("../constants/users");
-const { NotFoundError, UnauthorizedError } = require("../utils/errors");
+const { userRoles } = require("../constants/users");
+const {
+  NotFoundError,
+  UnauthorizedError,
+  BadRequestError,
+} = require("../utils/errors");
 const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
-const { account_types } = require("../data/account_types");
 const { selectProps } = require("../utils/helpers");
 
 // GET - /api/v1/workshops
 exports.getAllWorkshops = async (req, res) => {
-  // lägg till if-sats för city
   const city = req.query.city;
   const limit = req.query?.limit || 10;
   const offset = req.query?.offset || 0;
@@ -46,8 +48,6 @@ exports.getAllWorkshops = async (req, res) => {
   if (!workshops) throw new NotFoundError("Cannot find any workshops");
 
   return res.json(workshops);
-
-  //Lägg till errorhantering
 };
 
 // GET - /api/v1/workshops/:workshopId
@@ -101,7 +101,7 @@ exports.createNewWorkshop = async (req, res) => {
     !opening_hours ||
     !cityId
   ) {
-    throw new BadRequestError("You must fill in all fields!");
+    throw new BadRequestError("You must fill in all fields.");
   }
 
   const [newWorkshopId] = await sequelize.query(
@@ -160,8 +160,10 @@ exports.updateWorkshopById = async (req, res) => {
   );
 
   if (!workshop) throw new NotFoundError("This workshop does not exist.");
-
-  if (userId !== workshopId && req.user.role !== userRoles.ADMIN) {
+  console.log(workshop);
+  console.log(userId);
+  console.log(workshopId);
+  if (userId !== workshop.fk_user_id && req.user.role !== userRoles.ADMIN) {
     throw new UnauthorizedError(
       "You do not have permission to update this workshop."
     );
@@ -179,6 +181,7 @@ exports.updateWorkshopById = async (req, res) => {
         telephone: telephone,
         opening_hours: opening_hours,
         fk_city_id: fk_city_id,
+        workshopId: workshopId,
       },
       type: QueryTypes.UPDATE,
     }
@@ -186,9 +189,6 @@ exports.updateWorkshopById = async (req, res) => {
   return res.status(201).json({
     message: "The workshop has been updated",
   });
-  //Headers?
-
-  //return res.send("updateWorkshopById has been called");
 };
 
 // DELETE - /api/v1/workshops/:workshopId
